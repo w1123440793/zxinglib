@@ -1,0 +1,1 @@
+对zxing 扫描的抽取，只抽取了二维码的扫描和生成，更多格式请访问https://github.com/zxing/zxing
