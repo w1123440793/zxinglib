@@ -98,14 +98,16 @@ public class ScanQRcodeView extends FrameLayout implements SurfaceHolder.Callbac
     protected void onAttachedToWindow() {
         Log.e(TAG, "onAttachedToWindow");
         super.onAttachedToWindow();
-        cameraManager = new CameraManager(getContext().getApplicationContext());
-        ambientLightManager.start(cameraManager);
-        preView.setCameraManager(cameraManager);
-        SurfaceHolder surfaceHolder = cameraView.getHolder();
+        final SurfaceHolder surfaceHolder = cameraView.getHolder();
         if (hasSurface) {
-            initCamera(surfaceHolder);
+            postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    initCamera(surfaceHolder);
+                }
+            },300);
         } else {
-            surfaceHolder.addCallback(this);
+            surfaceHolder.addCallback(ScanQRcodeView.this);
         }
     }
 
@@ -133,7 +135,12 @@ public class ScanQRcodeView extends FrameLayout implements SurfaceHolder.Callbac
         }
         if (!hasSurface) {
             hasSurface = true;
-            initCamera(holder);
+            postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    initCamera(holder);
+                }
+            },300);
         }
     }
 
@@ -153,10 +160,18 @@ public class ScanQRcodeView extends FrameLayout implements SurfaceHolder.Callbac
         if (surfaceHolder == null) {
             throw new IllegalStateException("No SurfaceHolder provided");
         }
+
+        if (cameraManager == null) {
+            cameraManager = new CameraManager(getContext().getApplicationContext());
+            ambientLightManager.start(cameraManager);
+            preView.setCameraManager(cameraManager);
+            preView.startPre();
+        }
         if (cameraManager.isOpen()) {
             Log.w(TAG, "initCamera() while already open -- late SurfaceView callback?");
             return;
         }
+
 
         try {
             cameraManager.openDriver(surfaceHolder);

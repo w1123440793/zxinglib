@@ -124,13 +124,19 @@ public class ScanPreView extends View {
     @Override
     public void onWindowFocusChanged(boolean hasWindowFocus) {
         super.onWindowFocusChanged(hasWindowFocus);
-        animator.start();
+
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        animator.cancel();
+        if (animator.isRunning())
+            animator.cancel();
+    }
+
+    public void startPre(){
+        if (animator!=null)
+            animator.start();
     }
 
     public void setCameraManager(CameraManager cameraManager){
